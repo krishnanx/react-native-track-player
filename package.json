@@ -4,14 +4,7 @@
   "description": "A fully fledged audio module created for music apps",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
-  "exports": {
-    ".": {
-      "source": "./src/index.tsx",
-      "types": "./lib/typescript/src/index.d.ts",
-      "default": "./lib/module/index.js"
-    },
-    "./package.json": "./package.json"
-  },
+ 
   "files": [
     "src",
     "lib",
@@ -58,6 +51,7 @@
     "format:fix": "prettier --write src web",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "build": "yarn prepare",
+    "prepare": "bob build --targets module",
     "release": "release-it --only-version"
   },
   "keywords": [
