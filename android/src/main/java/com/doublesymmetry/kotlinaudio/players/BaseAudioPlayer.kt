@@ -59,7 +59,6 @@ abstract class BaseAudioPlayer internal constructor(
     private var playerListener = InnerPlayerListener()
     private val scope = MainScope()
     private var cache: SimpleCache? = null
-    private val renderer = DefaultRenderersFactory(context)
 
     val playerEventHolder = PlayerEventHolder()
 
@@ -160,20 +159,26 @@ abstract class BaseAudioPlayer internal constructor(
     }
 
     init {
-       exoPlayer = ExoPlayer
-        .Builder(context)
-        .setRenderersFactory(renderer)
-        .setHandleAudioBecomingNoisy(options.handleAudioBecomingNoisy)
-        .setMediaSourceFactory(MediaFactory(context, cache))
-        .setWakeMode(setWakeMode(options.wakeMode))
-        .apply {
-            setLoadControl(setupBuffer(options.bufferOptions))
+        if (options.cacheSizeKb > 0) {
+            cache = Cache.initCache(context, options.cacheSizeKb)
         }
-        .setSkipSilenceEnabled(options.skipSilence)
-        .setName("kotlin-audio-player")
-        .build()
+        playerEventHolder.updateAudioPlayerState(AudioPlayerState.IDLE)
+        val renderer = DefaultRenderersFactory(context)
+        renderer.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+        exoPlayer = ExoPlayer
+            .Builder(context)
+            .setRenderersFactory(renderer)
+            .setHandleAudioBecomingNoisy(options.handleAudioBecomingNoisy)
+            .setMediaSourceFactory(MediaFactory(context, cache))
+            .setWakeMode(setWakeMode(options.wakeMode))
+            .apply {
+                setLoadControl(setupBuffer(options.bufferOptions))
+            }
+            .setSkipSilenceEnabled(options.skipSilence)
+            .setName("kotlin-audio-player")
+            .build()
 
-        forwardingPlayer = InnerForwardingPlayer(exoPlayer)
+        
         // ===================== EQ HOOK (ADD THIS) =====================
        // if using AnalyticsListener (new signature)
         // exoPlayer.addAnalyticsListener(object : AnalyticsListener {
@@ -199,6 +204,8 @@ abstract class BaseAudioPlayer internal constructor(
             .setContentType(options.audioContentType)
             .build()
         exoPlayer.setAudioAttributes(audioAttributes, options.handleAudioFocus)
+        forwardingPlayer = InnerForwardingPlayer(exoPlayer)
+        player.addListener(playerListener)
 
     }
 
