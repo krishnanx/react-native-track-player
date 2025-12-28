@@ -58,7 +58,6 @@
     "format:fix": "prettier --write src web",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "build": "yarn prepare",
-    "prepare": "bob build",
     "release": "release-it --only-version"
   },
   "keywords": [
@@ -119,7 +118,7 @@
     "react": "19.1.0",
     "react-native": "0.80.0",
     "react-native-builder-bob": "^0.40.12",
-    "release-it": "^17.10.0",
+    "release-it": "^19.2.2",
     "shaka-player": "^4.15.4",
     "turbo": "^1.10.7",
     "typescript": "^5.8.3"

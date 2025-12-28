@@ -24,6 +24,15 @@ object EqualizerManager {
         equalizer?.setBandLevel(band, level)
     }
 
+    fun setBass(level: Short) {
+        equalizer?.let {
+            if (it.numberOfBands > 0) {
+                // first band is usually bass
+                it.setBandLevel(0, level)
+            }
+        }
+    }
+
     fun reset() {
         equalizer?.let {
             for (i in 0 until it.numberOfBands) {

@@ -59,6 +59,8 @@ abstract class BaseAudioPlayer internal constructor(
     private var playerListener = InnerPlayerListener()
     private val scope = MainScope()
     private var cache: SimpleCache? = null
+    private val renderer = DefaultRenderersFactory(context)
+
     val playerEventHolder = PlayerEventHolder()
 
     private var wasDucking = false
@@ -171,16 +173,25 @@ abstract class BaseAudioPlayer internal constructor(
         .setName("kotlin-audio-player")
         .build()
 
+        forwardingPlayer = InnerForwardingPlayer(exoPlayer)
         // ===================== EQ HOOK (ADD THIS) =====================
-        exoPlayer.addAnalyticsListener(object : androidx.media3.exoplayer.analytics.AnalyticsListener {
-            override fun onAudioSessionId(
-                eventTime: AnalyticsListener.EventTime,
-                audioSessionId: Int
-            ) {
-                Log.d("EQ", "AudioSessionId = $audioSessionId")
+       // if using AnalyticsListener (new signature)
+        // exoPlayer.addAnalyticsListener(object : AnalyticsListener {
+        //     override fun onAudioSessionId(player: Player, audioSessionId: Int) {
+        //         EqualizerManager.init(audioSessionId)
+        //     }
+        // })
+        exoPlayer.addAnalyticsListener(object : AnalyticsListener {
+        override fun onAudioSessionIdChanged(
+            eventTime: AnalyticsListener.EventTime,
+            audioSessionId: Int
+        ) {
+                Log.d("EQ", "Audio session id reported: $audioSessionId")
                 EqualizerManager.init(audioSessionId)
             }
         })
+
+
         // =============================================================
 
         val audioAttributes = AudioAttributes.Builder()
