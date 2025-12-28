@@ -7,15 +7,21 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import java.util.HashMap
+import com.doublesymmetry.trackplayer.audiofx.EqualizerModule
+
 
 class TrackPlayerPackage : BaseReactPackage() {
-  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-    return if (name == MusicModule.NAME) {
-      MusicModule(reactContext)
-    } else {
-      null
-    }
+  override fun getModule(
+    name: String,
+    reactContext: ReactApplicationContext
+    ): NativeModule? {
+      return when (name) {
+        MusicModule.NAME -> MusicModule(reactContext)
+        EqualizerModule.NAME -> EqualizerModule(reactContext) // 👈 ADD
+        else -> null
+      }
   }
+
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
     return ReactModuleInfoProvider {
@@ -28,6 +34,16 @@ class TrackPlayerPackage : BaseReactPackage() {
         false,  // isCxxModule
         true // isTurboModule
       )
+
+      moduleInfos[EqualizerModule.NAME] = ReactModuleInfo(
+        EqualizerModule.NAME,
+        EqualizerModule.NAME,
+        false,
+        false,
+        false,
+        true // TurboModule
+      )
+
       moduleInfos
     }
   }

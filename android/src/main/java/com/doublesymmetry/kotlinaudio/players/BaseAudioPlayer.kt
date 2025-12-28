@@ -39,7 +39,9 @@ import kotlinx.coroutines.MainScope
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import android.util.Log
+import com.doublesymmetry.kotlinaudio.audiofx.EqualizerManager
 abstract class BaseAudioPlayer internal constructor(
     private val context: Context,
     val options: PlayerOptions = PlayerOptions()
@@ -156,33 +158,37 @@ abstract class BaseAudioPlayer internal constructor(
     }
 
     init {
-        if (options.cacheSizeKb > 0) {
-            cache = Cache.initCache(context, options.cacheSizeKb)
+       exoPlayer = ExoPlayer
+        .Builder(context)
+        .setRenderersFactory(renderer)
+        .setHandleAudioBecomingNoisy(options.handleAudioBecomingNoisy)
+        .setMediaSourceFactory(MediaFactory(context, cache))
+        .setWakeMode(setWakeMode(options.wakeMode))
+        .apply {
+            setLoadControl(setupBuffer(options.bufferOptions))
         }
-        playerEventHolder.updateAudioPlayerState(AudioPlayerState.IDLE)
+        .setSkipSilenceEnabled(options.skipSilence)
+        .setName("kotlin-audio-player")
+        .build()
 
-        val renderer = DefaultRenderersFactory(context)
-        renderer.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-        exoPlayer = ExoPlayer
-            .Builder(context)
-            .setRenderersFactory(renderer)
-            .setHandleAudioBecomingNoisy(options.handleAudioBecomingNoisy)
-            .setMediaSourceFactory(MediaFactory(context, cache))
-            .setWakeMode(setWakeMode(options.wakeMode))
-            .apply {
-                setLoadControl(setupBuffer(options.bufferOptions))
+        // ===================== EQ HOOK (ADD THIS) =====================
+        exoPlayer.addAnalyticsListener(object : androidx.media3.exoplayer.analytics.AnalyticsListener {
+            override fun onAudioSessionId(
+                eventTime: AnalyticsListener.EventTime,
+                audioSessionId: Int
+            ) {
+                Log.d("EQ", "AudioSessionId = $audioSessionId")
+                EqualizerManager.init(audioSessionId)
             }
-            .setSkipSilenceEnabled(options.skipSilence)
-            .setName("kotlin-audio-player")
-            .build()
+        })
+        // =============================================================
 
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_MEDIA)
             .setContentType(options.audioContentType)
             .build()
         exoPlayer.setAudioAttributes(audioAttributes, options.handleAudioFocus)
-        forwardingPlayer = InnerForwardingPlayer(exoPlayer)
-        player.addListener(playerListener)
+
     }
 
     /**
