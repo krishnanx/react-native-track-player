@@ -29,6 +29,7 @@ object EqualizerManager {
             if (it.numberOfBands > 0) {
                 // first band is usually bass
                 it.setBandLevel(0, level)
+                Log.d("EQ", "Bass band set to $level") // <-- ADD THIS
             }
         }
     }
@@ -37,6 +38,7 @@ object EqualizerManager {
         equalizer?.let {
             for (i in 0 until it.numberOfBands) {
                 it.setBandLevel(i.toShort(), 0)
+                Log.d("EQ", "it is now reseted") // <-- ADD THIS
             }
         }
     }
