@@ -471,16 +471,19 @@ abstract class BaseAudioPlayer internal constructor(
     inner class InnerForwardingPlayer(player: ExoPlayer): ForwardingPlayer(player) {
         override fun setMediaItems(mediaItems: MutableList<MediaItem>, resetPosition: Boolean) {
             // override setMediaItem handling to RNTP
+            super.setMediaItems(mediaItems)
             return
         }
 
         override fun addMediaItems(mediaItems: MutableList<MediaItem>) {
             // override setMediaItem handling to RNTP
+             super.setMediaItems(mediaItems)
             return
         }
 
         override fun addMediaItems(index: Int, mediaItems: MutableList<MediaItem>) {
             // override setMediaItem handling to RNTP
+             super.setMediaItems(mediaItems)
             return
         }
 
@@ -490,6 +493,7 @@ abstract class BaseAudioPlayer internal constructor(
             startPositionMs: Long
         ) {
             // override setMediaItem handling to RNTP
+             super.setMediaItems(mediaItems)
             return
         }
 
