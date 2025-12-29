@@ -86,4 +86,15 @@ object EqualizerManager {
         currentSessionId = null
         Log.d("EQ", "EQ released")
     }
+
+    fun getBandFrequencies(): IntArray {
+        val eq = equalizer ?: return intArrayOf()
+        val count = eq.numberOfBands
+        val freqs = IntArray(count)
+        for (i in 0 until count) {
+            freqs[i] = eq.getCenterFreq(i.toShort()) / 1000 // in Hz
+        }
+        return freqs
+    }   
+
 }

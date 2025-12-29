@@ -63,4 +63,15 @@ class EqualizerModule(
     fun reset() {
         EqualizerManager.reset()
     }
+    
+    
+    @ReactMethod
+    fun getBandFrequencies(promise: Promise) {
+        val freqs = EqualizerManager.getBandFrequencies()
+        val arr = Arguments.createArray()
+        freqs.forEach { arr.pushInt(it) }
+        promise.resolve(arr)
+    }
+  
+
 }
