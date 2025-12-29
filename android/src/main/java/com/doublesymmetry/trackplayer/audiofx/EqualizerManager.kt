@@ -92,7 +92,7 @@ object EqualizerManager {
         val count = eq.numberOfBands
         val freqs = IntArray(count)
         for (i in 0 until count) {
-            freqs[i] = eq.getCenterFreq(i.toShort()) / 1000 // in Hz
+            freqs[i] = (eq.getCenterFreq(i.toShort()) / 1000).toInt()
         }
         return freqs
     }   
