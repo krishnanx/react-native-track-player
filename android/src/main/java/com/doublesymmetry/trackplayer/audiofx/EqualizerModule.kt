@@ -1,25 +1,52 @@
-package com.doublesymmetry.trackplayer.audiofx
-
-import com.facebook.react.bridge.*
-import com.doublesymmetry.kotlinaudio.audiofx.EqualizerManager
-
 class EqualizerModule(
     reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext) {
 
-    companion object {
-        const val NAME = "AudioEqualizer"
+    override fun getName(): String = "AudioEqualizer"
+
+    /* ---------------- ENABLE / DISABLE ---------------- */
+
+    @ReactMethod
+    fun setEnabled(enabled: Boolean) {
+        EqualizerManager.setEnabled(enabled)
     }
 
-    override fun getName(): String = NAME
+    /* ---------------- BAND CONTROL ---------------- */
+
+    @ReactMethod
+    fun setBandLevel(band: Int, level: Int) {
+        EqualizerManager.setBandLevel(
+            band.toShort(),
+            level.toShort()
+        )
+    }
+
+    @ReactMethod
+    fun getBandCount(promise: Promise) {
+        promise.resolve(EqualizerManager.getBandCount().toInt())
+    }
+
+    @ReactMethod
+    fun getBandRange(promise: Promise) {
+        val range = EqualizerManager.getBandRange()
+        val arr = Arguments.createArray()
+        arr.pushInt(range[0].toInt())
+        arr.pushInt(range[1].toInt())
+        promise.resolve(arr)
+    }
+
+    /* ---------------- BASS ---------------- */
 
     @ReactMethod
     fun setBass(level: Int) {
-        EqualizerManager.setBass(level.toShort())
+        val strength = (level * 10).coerceIn(0, 1000)
+        EqualizerManager.setBass(strength.toShort())
     }
+
+    /* ---------------- RESET ---------------- */
 
     @ReactMethod
     fun reset() {
-        EqualizerManager.release()
+        EqualizerManager.reset()
     }
 }
