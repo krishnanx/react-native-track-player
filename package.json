@@ -51,7 +51,7 @@
     "format:fix": "prettier --write src web",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "build": "yarn prepare",
-    "prepare": "bob build --targets module",
+    "prepare": "echo skip prepare",
     "release": "release-it --only-version"
   },
   "keywords": [
