@@ -2,7 +2,11 @@ class EqualizerModule(
     reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext) {
 
-    override fun getName(): String = "AudioEqualizer"
+    companion object {
+        const val NAME = "AudioEqualizer"
+    }
+
+    override fun getName(): String = NAM
 
     /* ---------------- ENABLE / DISABLE ---------------- */
 
