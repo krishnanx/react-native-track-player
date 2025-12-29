@@ -89,12 +89,13 @@ object EqualizerManager {
 
     fun getBandFrequencies(): IntArray {
         val eq = equalizer ?: return intArrayOf()
-        val count = eq.numberOfBands
+        val count = eq.numberOfBands.toInt()
         val freqs = IntArray(count)
         for (i in 0 until count) {
-            freqs[i] = (eq.getCenterFreq(i.toShort()) / 1000).toInt()
+            val centerFreq = eq.getCenterFreq(i.toShort()) // returns Int
+            freqs[i] = centerFreq / 1000
         }
         return freqs
-    }   
+    }
 
 }
