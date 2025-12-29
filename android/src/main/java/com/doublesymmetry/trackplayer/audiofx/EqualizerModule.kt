@@ -6,7 +6,7 @@ class EqualizerModule(
         const val NAME = "AudioEqualizer"
     }
 
-    override fun getName(): String = NAM
+    override fun getName(): String = NAME
 
     /* ---------------- ENABLE / DISABLE ---------------- */
 
